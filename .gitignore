@@ -1,0 +1,12 @@
+# virtual environment
+venv/
+
+# os temp files
+__pycache__/
+.DS_Store
+
+# env file
+.env
+
+# database
+*.db

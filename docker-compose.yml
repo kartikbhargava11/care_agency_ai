@@ -1,0 +1,34 @@
+# this file configures the multi-container system
+
+services:
+  web_fastAPI:
+    build:
+      context: . # look at my machine folder, find my files and build an image out of them using Dockerfile
+    container_name: care_backend_fastAPI
+    ports:
+      - '8000:8000'
+    volumes: # bind mounting -> map local files dynamically for binding
+      - .:/app
+    env_file::
+      - .env
+    networks:
+      - care_network
+    
+  ollama_node:
+    image: ollama/ollama:latest # go to the public internet, download software file built by Ollama team. 
+    container_name: care_ai_ollama
+    ports:
+      - '11431:11431'
+    volumes:
+      - ollama_storage:/root/.ollama # ai model will be saved inside this volume
+    networks:
+      - care_network
+
+
+# infra components
+volumes: # ex. dig a vault
+  ollama_storage:
+
+networks: # ex. build a road bridge
+  care_network:
+    driver: bridge
