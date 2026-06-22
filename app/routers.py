@@ -3,9 +3,13 @@
 # orchestrate the processing
 # format the output response
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
+from sqlalchemy.orm import Session
 from app.schemas import CallTranscriptRequest, AnalysisResponse
 from app.services import AIService
+from app.database import get_db
+from app.models import IncidentLogTable
+
 
 # industry standard versioning of APIs
 router = APIRouter(prefix="/api/v1", tags=["Care Logistics"])
@@ -17,7 +21,7 @@ router = APIRouter(prefix="/api/v1", tags=["Care Logistics"])
     status_code=status.HTTP_201_CREATED, 
     summary="Process inbound call logs and parse structural attributes"
 )
-async def analyze_call_log(request: CallTranscriptRequest): # validates the incoming data
+async def analyze_call_log(request: CallTranscriptRequest, db: Session = Depends(get_db)): # validates the incoming data and inputs data into the database
 
     # sending the validated transcript to the AI model
     # await -> non-blocking switch
@@ -27,6 +31,22 @@ async def analyze_call_log(request: CallTranscriptRequest): # validates the inco
     structured_ai_data = await AIService.extract_structured_log(request.transcript)
     
     is_critical = structured_ai_data.get("severity") == "CRITICAL"
+
+
+    # mapping the AI output parameters directly onto our database table fields
+    db_record = IncidentLogTable(
+        caller=structured_ai_data.get('caller'),
+        patient_name=structured_ai_data.get('patient_name'),
+        severity=structured_ai_data.get('severity'),
+        requires_immediate_human_action=structured_ai_data.get('requires_immediate_human_action'),
+        incident_summary=structured_ai_data.get('incident_summary'),
+        raw_transcript=request.transcript
+    )
+
+    # add the table context and execute a permanent SQL insert commit onto disk
+    db.add(db_record)
+    db.commit()
+    db.refresh(db_record) # brings the newly inserted object back into the memory so API can return it to frontend if needed
     
     # retuning a python dict. FastAPI will drop it on 'response_model=AnalysisResponse' filter to ensure data health and outputs a JSON response back to the frontend.
     return {

@@ -1,34 +1,34 @@
-# this file configures the multi-container system
-
+# This file orchestrates our multi-container architecture seamlessly
 services:
-  web_fastAPI:
+  backend_fast_api:
     build:
-      context: . # look at my machine folder, find my files and build an image out of them using Dockerfile
-    container_name: care_backend_fastAPI
+      context: . # Look at my local directory, read the custom Dockerfile, and compile the python app image
+    container_name: backend_fast_api
     ports:
-      - '8000:8000'
-    volumes: # bind mounting -> map local files dynamically for binding
-      - .:/app
-    env_file::
-      - .env
+      - '8000:8000' # Map your physical Mac port 8000 to the container's FastAPI network layer
+    volumes:
+      - .:/app # Bind-mounts your current local folder right inside the container for live editing
+    env_file:
+      - .env # Streams local system environment configurations safely
     networks:
-      - care_network
+      - care_network # Mounts this container onto our isolated network bridge switch
+    depends_on:
+      - ollama_node # Ensures the AI compute core initializes before the web API tries to boot up
     
   ollama_node:
-    image: ollama/ollama:latest # go to the public internet, download software file built by Ollama team. 
-    container_name: care_ai_ollama
+    image: ollama/ollama:latest # Download the official pre-packaged software from Docker Hub registry
+    container_name: coordinator_bonnie
     ports:
-      - '11431:11431'
+      - '11434:11434' # Reconfigured to match standard internal Ollama routing ports
     volumes:
-      - ollama_storage:/root/.ollama # ai model will be saved inside this volume
+      - ollama_storage:/root/.ollama # Plugs this container's cache right into our persistent disk volume vault
     networks:
-      - care_network
+      - care_network # Mounts this container onto the same network bridge for internal DNS ping routing
 
+# Manufacture global structural infrastructure components
+volumes:
+  ollama_storage: # Automatically digs and configures the long-term disk storage partition on this local machine
 
-# infra components
-volumes: # ex. dig a vault
-  ollama_storage:
-
-networks: # ex. build a road bridge
-  care_network:
+networks:
+  care_network: # Automatically manufactures the virtual isolated software routing switch bridge
     driver: bridge

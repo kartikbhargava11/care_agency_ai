@@ -31,7 +31,7 @@ EXPOSE 8000
 # informs the host cloud platforms that is container app is listening for incoming network data packets
 # on port 8000
 
-CMD ['uvicorn', 'main:app', '--host', '0.0.0.0', '--port', '8000']
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 # runtime execution command that boots up the server
 # main:app -> look inside main.py for the app = FastAPI() web instance
 # --host 0.0.0.0 -> instructs the app to listen to external traffic coming from the public internet

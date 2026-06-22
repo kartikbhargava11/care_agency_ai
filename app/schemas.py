@@ -1,5 +1,5 @@
-# this file handles data and validates it
-# making sure no bad or malformed data enters database
+# this file handles data validation
+# making sure no bad or malformed data enters in and sent out
 # The Internet (Incoming JSON) -> Pydantic Schema (Data Control) -> FastAPI and Logic (Route Controller)
 
 from pydantic import BaseModel, Field # BaseModel is a class from pydantic library. it turns a standard python class into a fast data validator

@@ -10,6 +10,10 @@
 from fastapi import FastAPI # pull in core FastAPI framework class, contains built-in logic required to listen to network traffic, generate automatic documentation, and handle web communication protocols
 from config.settings import settings # imports global variables from a single source of truth
 from app.routers import router as care_router # imports a routing subsystem 
+from app.database import engine
+from app import models
+
+models.Base.metadata.create_all(bind=engine) # auto creates database file and operational layouts based on app/models.py
 
 app = FastAPI( # instantiating the FastAPI object and naming it app
     # passing metadata to application's wrapper 
