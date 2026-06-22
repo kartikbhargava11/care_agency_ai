@@ -12,6 +12,7 @@ In healthcare and care agencies, clean note-keeping is legally required for gove
 If a prospective client calls your number off an ad at 2:00 AM, the AI answers instantly, qualifies their budget, extracts their needs, logs them into the CRM as a "Warm Lead," and texts them a calendar link to book a consultation with you the next morning. You capture leads your competitors miss because their offices are closed.
 
 ## Tools Required
+
 1. **Python 3.10+:** The core programming language runtime environment 
 2. **Docker Desktop:** Required to host, build, and isolate the application layers
 3. **Ollama Engine:** The open source inference manager that pulls and runs local model weights
